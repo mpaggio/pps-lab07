@@ -55,9 +55,10 @@ class RobotWithBattery(val robot: LoggingRobot) extends Robot:
   override def toString: String = s"${robot.toString} with battery at $battery%"
 
 class RobotCanFail(val robot: LoggingRobot, val prob: Int) extends Robot:
+  require(prob >= 0 && prob <= 100)
   export robot.{position, direction, turn}
   override def act(): Unit =
-    if !List.from(1 to prob).contains(Random.nextInt() % 10 + 1) then robot.act() else println("Action failed")
+    if Random.nextInt(100) >= prob then robot.act() else println("Action failed")
   override def toString: String = s"${robot.toString} with $prob% to fail"
 
 class RobotRepeated(val robot: LoggingRobot, val reps: Int) extends Robot:
@@ -90,7 +91,7 @@ class RobotRepeated(val robot: LoggingRobot, val reps: Int) extends Robot:
   println()
 
   println("ROBOT CAN FAIL")
-  val failingRobot = RobotCanFail(LoggingRobot(SimpleRobot((0, 0), Direction.North)), 7)
+  val failingRobot = RobotCanFail(LoggingRobot(SimpleRobot((0, 0), Direction.North)), 70)
   println(failingRobot)
   failingRobot.act() // robot should be at (0, 1) facing North
   failingRobot.act() // robot should be at (0, 2) facing North
